@@ -1,0 +1,46 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: shopwise-database
+    environment:
+      POSTGRES_DB: shopwise
+      POSTGRES_USER: shopwise
+      POSTGRES_PASSWORD: shopwise
+    ports:
+      - "5432:5432"
+    volumes:
+      - shopwise-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shopwise -d shopwise"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    image: orhanma/shopwise-backend:local
+    container_name: shopwise-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/shopwise
+      SPRING_DATASOURCE_USERNAME: shopwise
+      SPRING_DATASOURCE_PASSWORD: shopwise
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    image: orhanma/shopwise-frontend:local
+    container_name: shopwise-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+volumes:
+  shopwise-postgres-data:
