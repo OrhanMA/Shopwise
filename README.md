@@ -61,16 +61,16 @@ Chaque issue doit être reliée à une user story ou à un livrable attendu.
 
 | Issue | Sujet | Type | Statut |
 | --- | --- | --- | --- |
-| US1 | Créer et mettre à jour une fiche client | User story | À créer dans GitHub Issues |
-| US2 | Créer un rendez-vous | User story | À créer dans GitHub Issues |
-| US3 | Lister et filtrer les rendez-vous | User story | À créer dans GitHub Issues |
-| US4 | Marquer un rendez-vous honoré ou annulé | User story | À créer dans GitHub Issues |
-| US5 | Attribuer automatiquement les points de fidélité | User story | À créer dans GitHub Issues |
-| US6 | Simuler la connexion client | User story | À créer dans GitHub Issues |
-| US7 | Consulter le solde et l'historique de points | User story | À créer dans GitHub Issues |
-| Q2 | Concevoir la base de données | Livrable | À créer dans GitHub Issues |
-| Q4 | Ajouter les tests et rapports de couverture | Livrable | À créer dans GitHub Issues |
-| Q5 | Ajouter Docker et la CI/CD | Livrable | À créer dans GitHub Issues |
+| `#1` | Créer et mettre à jour une fiche client | User story | Ouverte |
+| `#3` | Créer un rendez-vous | User story | Ouverte |
+| `#4` | Lister et filtrer les rendez-vous | User story | Ouverte |
+| `#2` | Marquer un rendez-vous honoré ou annulé | User story | Ouverte |
+| `#7` | Attribuer automatiquement les points de fidélité | User story | Ouverte |
+| `#5` | Simuler la connexion client | User story | Ouverte |
+| `#6` | Consulter le solde et l'historique de points | User story | Ouverte |
+| `#10` | Concevoir la base de données | Livrable | Clôturée |
+| `#9` | Ajouter les tests et rapports de couverture | Livrable | En cours |
+| `#8` | Ajouter Docker et la CI/CD | Livrable | Ouverte |
 
 ## API
 

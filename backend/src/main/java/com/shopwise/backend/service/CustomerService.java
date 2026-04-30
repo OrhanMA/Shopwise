@@ -26,19 +26,19 @@ public class CustomerService {
     }
 
     public Customer getCustomer(long id) {
-        return customerRepository.findById(id)
-                .filter(customer -> customer.getShop().getId().equals(DEMO_SHOP_ID))
+        return customerRepository.findByIdAndShopId(id, DEMO_SHOP_ID)
                 .orElseThrow(() -> new ResourceNotFoundException("Client introuvable."));
     }
 
     public Customer findByEmail(String email) {
-        return customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, email)
+        return customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, email.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Aucun client ne correspond à cet email."));
     }
 
     @Transactional
     public Customer createCustomer(CustomerRequest request) {
-        customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, request.email())
+        String normalizedEmail = request.email().trim().toLowerCase();
+        customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, normalizedEmail)
                 .ifPresent(customer -> {
                     throw new BusinessRuleException("Un client existe déjà avec cet email.");
                 });
@@ -53,7 +53,8 @@ public class CustomerService {
     @Transactional
     public Customer updateCustomer(long id, CustomerRequest request) {
         Customer customer = getCustomer(id);
-        customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, request.email())
+        String normalizedEmail = request.email().trim().toLowerCase();
+        customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, normalizedEmail)
                 .filter(existing -> !existing.getId().equals(id))
                 .ifPresent(existing -> {
                     throw new BusinessRuleException("Un autre client existe déjà avec cet email.");

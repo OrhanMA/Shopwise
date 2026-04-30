@@ -46,11 +46,9 @@ public class AppointmentService {
 
     @Transactional
     public Appointment createAppointment(AppointmentRequest request) {
-        Customer customer = customerRepository.findById(request.customerId())
-                .filter(item -> item.getShop().getId().equals(CustomerService.DEMO_SHOP_ID))
+        Customer customer = customerRepository.findByIdAndShopId(request.customerId(), CustomerService.DEMO_SHOP_ID)
                 .orElseThrow(() -> new ResourceNotFoundException("Client introuvable."));
-        ServiceOffering service = serviceOfferingRepository.findById(request.serviceId())
-                .filter(item -> item.getShop().getId().equals(CustomerService.DEMO_SHOP_ID))
+        ServiceOffering service = serviceOfferingRepository.findByIdAndShopId(request.serviceId(), CustomerService.DEMO_SHOP_ID)
                 .orElseThrow(() -> new ResourceNotFoundException("Service introuvable."));
 
         Appointment appointment = new Appointment();
@@ -96,8 +94,7 @@ public class AppointmentService {
     }
 
     private Appointment getAppointment(long id) {
-        return appointmentRepository.findById(id)
-                .filter(item -> item.getShop().getId().equals(CustomerService.DEMO_SHOP_ID))
+        return appointmentRepository.findByIdAndShopId(id, CustomerService.DEMO_SHOP_ID)
                 .orElseThrow(() -> new ResourceNotFoundException("Rendez-vous introuvable."));
     }
 
