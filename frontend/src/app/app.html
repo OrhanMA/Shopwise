@@ -1,0 +1,45 @@
+<div class="app-shell">
+  <mat-toolbar class="app-toolbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <mat-icon>storefront</mat-icon>
+      </div>
+
+      <div class="brand-copy">
+        <span class="brand-location">Chez Marie</span>
+        <span class="brand-title">ShopWise</span>
+      </div>
+    </div>
+
+    <nav class="main-nav" aria-label="Navigation principale">
+      @for (item of navigationItems; track item.route) {
+        <a
+          mat-button
+          class="nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </mat-toolbar>
+
+  <section class="overview">
+    @for (item of overviewItems; track item.title) {
+      <mat-card class="overview-card" appearance="outlined">
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <div>
+          <p class="overview-kicker">{{ item.kicker }}</p>
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.description }}</p>
+        </div>
+      </mat-card>
+    }
+  </section>
+
+  <main class="page-content">
+    <router-outlet />
+  </main>
+</div>

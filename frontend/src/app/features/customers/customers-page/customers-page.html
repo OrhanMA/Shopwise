@@ -1,0 +1,124 @@
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Gestion clients</p>
+    <h1>Base clients</h1>
+    <p class="intro">
+      Créez les fiches de contact et mettez-les à jour pour piloter les rendez-vous et la
+      fidélisation.
+    </p>
+  </div>
+
+  <div class="header-stats" aria-label="Résumé des clients">
+    <div class="stat">
+      <span>Clients</span>
+      <strong>{{ customers().length }}</strong>
+    </div>
+    <div class="stat">
+      <span>Connexion</span>
+      <strong>Par email</strong>
+    </div>
+  </div>
+</section>
+
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (errorMessage()) {
+  <p class="feedback error">{{ errorMessage() }}</p>
+}
+
+<section class="customers-layout">
+  <mat-card class="panel" appearance="outlined">
+    <div class="panel-heading">
+      <div>
+        <h2>{{ selectedCustomerId() ? 'Mettre à jour un client' : 'Créer un client' }}</h2>
+        <p>Nom, email et téléphone sont centralisés pour l’équipe de Chez Marie.</p>
+      </div>
+
+      @if (selectedCustomerId()) {
+        <button mat-stroked-button type="button" (click)="resetForm()">
+          <mat-icon>close</mat-icon>
+          <span>Nouvelle fiche</span>
+        </button>
+      }
+    </div>
+
+    <form class="customer-form" [formGroup]="customerForm" (ngSubmit)="submitCustomer()">
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Prénom</mat-label>
+          <input matInput formControlName="firstName" />
+          @if (customerForm.controls.firstName.invalid && customerForm.controls.firstName.touched) {
+            <mat-error>Le prénom est requis.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="lastName" />
+          @if (customerForm.controls.lastName.invalid && customerForm.controls.lastName.touched) {
+            <mat-error>Le nom est requis.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+          @if (customerForm.controls.email.invalid && customerForm.controls.email.touched) {
+            <mat-error>Un email valide est requis.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Téléphone</mat-label>
+          <input matInput formControlName="phone" />
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-flat-button type="submit" [disabled]="isSaving()">
+          <mat-icon>{{ selectedCustomerId() ? 'save' : 'person_add' }}</mat-icon>
+          <span>{{ selectedCustomerId() ? 'Enregistrer' : 'Ajouter le client' }}</span>
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card class="panel" appearance="outlined">
+    <div class="panel-heading">
+      <div>
+        <h2>Clients enregistrés</h2>
+        <p>Les points affichés correspondent au solde actuel du programme de fidélité.</p>
+      </div>
+    </div>
+
+    <div class="customer-list">
+      @for (customer of customers(); track customer.id) {
+        <article class="customer-item">
+          <div class="customer-main">
+            <h3>{{ customerLabel(customer) }}</h3>
+            <p>{{ customer.email }}</p>
+            <p>{{ customer.phone || 'Téléphone non renseigné' }}</p>
+          </div>
+
+          <div class="customer-side">
+            <div class="points-badge">
+              <span>Points</span>
+              <strong>{{ customer.loyaltyPoints }}</strong>
+            </div>
+
+            <button mat-stroked-button type="button" (click)="startEdit(customer)">
+              <mat-icon>edit</mat-icon>
+              <span>Modifier</span>
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p class="empty-state">Aucun client enregistré pour le moment.</p>
+      }
+    </div>
+  </mat-card>
+</section>

@@ -1,0 +1,106 @@
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Portail client</p>
+    <h1>Connexion simulée</h1>
+    <p class="intro">
+      Le client peut se connecter avec son email pour vérifier ses informations et son solde
+      de fidélité.
+    </p>
+  </div>
+
+  <div class="header-note">
+    <mat-icon>mail</mat-icon>
+    <p>Connexion volontairement simplifiée, sans mot de passe ni JWT.</p>
+  </div>
+</section>
+
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (errorMessage()) {
+  <p class="feedback error">{{ errorMessage() }}</p>
+}
+
+<section class="portal-layout">
+  <mat-card class="panel" appearance="outlined">
+    <div class="panel-heading">
+      <div>
+        <h2>Se connecter</h2>
+        <p>Utilisez l’email d’un client déjà créé côté commerçant.</p>
+      </div>
+    </div>
+
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+        @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
+          <mat-error>Un email valide est requis.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-flat-button type="submit" [disabled]="isLoading()">
+          <mat-icon>login</mat-icon>
+          <span>Accéder au portail</span>
+        </button>
+
+        @if (customer()) {
+          <button mat-stroked-button type="button" (click)="disconnect()">
+            <mat-icon>logout</mat-icon>
+            <span>Réinitialiser</span>
+          </button>
+        }
+      </div>
+    </form>
+  </mat-card>
+
+  @if (loyaltySummary(); as summary) {
+    <div class="portal-content">
+      <mat-card class="panel" appearance="outlined">
+        <div class="identity-row">
+          <div>
+            <p class="eyebrow">Fiche client</p>
+            <h2>{{ customerName(summary.customer) }}</h2>
+            <p>{{ summary.customer.email }}</p>
+            <p>{{ summary.customer.phone || 'Téléphone non renseigné' }}</p>
+          </div>
+
+          <div class="balance-card">
+            <span>Solde de points</span>
+            <strong>{{ summary.balance }}</strong>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="panel" appearance="outlined">
+        <div class="panel-heading">
+          <div>
+            <h2>Historique de fidélité</h2>
+            <p>Chaque ligne indique l’origine des points visibles dans le solde courant.</p>
+          </div>
+        </div>
+
+        <div class="transactions-list">
+          @for (transaction of summary.transactions; track transaction.id) {
+            <article class="transaction-item">
+              <div>
+                <h3>{{ transactionLabel(transaction) }}</h3>
+                <p>{{ transaction.reason }}</p>
+                <p>{{ formatDateTime(transaction.createdAt) }}</p>
+              </div>
+
+              <div class="transaction-points">
+                <span>Points</span>
+                <strong>{{ transaction.points }}</strong>
+              </div>
+            </article>
+          } @empty {
+            <p class="empty-state">Aucune transaction disponible pour ce client.</p>
+          }
+        </div>
+      </mat-card>
+    </div>
+  }
+</section>
