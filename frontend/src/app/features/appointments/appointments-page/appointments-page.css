@@ -134,8 +134,10 @@ h3 {
 .status-chip {
   --mdc-chip-container-shape-radius: 999px;
   --mdc-chip-outline-color: transparent;
+  --mdc-chip-outline-width: 0;
   --mdc-chip-label-text-color: currentColor;
 
+  border: 0;
   border-radius: 999px;
   font-weight: 600;
   overflow: hidden;
