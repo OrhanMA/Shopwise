@@ -49,6 +49,13 @@ a,
 .status-chip .mdc-evolution-chip,
 .status-chip .mdc-evolution-chip__cell,
 .status-chip .mdc-evolution-chip__action {
+  border: 0;
   border-radius: inherit;
+  box-shadow: none;
   overflow: hidden;
+}
+
+.status-chip .mdc-evolution-chip__action::before,
+.status-chip .mdc-evolution-chip__action::after {
+  border: 0;
 }
