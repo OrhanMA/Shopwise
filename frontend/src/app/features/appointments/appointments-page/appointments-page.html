@@ -1,0 +1,213 @@
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Gestion des rendez-vous</p>
+    <h1>Planning et suivi</h1>
+    <p class="intro">
+      Organisez les rendez-vous, filtrez la journée et mettez à jour les statuts en quelques
+      clics.
+    </p>
+  </div>
+
+  <div class="header-stats" aria-label="Résumé du planning">
+    <div class="stat">
+      <span>Rendez-vous</span>
+      <strong>{{ appointments().length }}</strong>
+    </div>
+    <div class="stat">
+      <span>Points / rendez-vous honoré</span>
+      <strong>100</strong>
+    </div>
+  </div>
+</section>
+
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (errorMessage()) {
+  <p class="feedback error">{{ errorMessage() }}</p>
+}
+
+<section class="appointments-layout">
+  <div class="forms-column">
+    <mat-card class="panel" appearance="outlined">
+      <div class="panel-heading">
+        <div>
+          <h2>Filtrer les rendez-vous</h2>
+          <p>Date, statut ou client pour retrouver rapidement les créneaux utiles.</p>
+        </div>
+      </div>
+
+      <form class="filters-form" [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput type="date" formControlName="date" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Statut</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="">Tous</mat-option>
+              @for (status of statusOptions; track status) {
+                <mat-option [value]="status">{{ statusLabel(status) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Client</mat-label>
+          <mat-select formControlName="customerId">
+            <mat-option value="">Tous les clients</mat-option>
+            @for (customer of customers(); track customer.id) {
+              <mat-option [value]="customer.id">{{ customerLabel(customer) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-flat-button type="submit">
+            <mat-icon>filter_list</mat-icon>
+            <span>Appliquer</span>
+          </button>
+
+          <button mat-stroked-button type="button" (click)="resetFilters()">
+            <mat-icon>restart_alt</mat-icon>
+            <span>Réinitialiser</span>
+          </button>
+        </div>
+      </form>
+    </mat-card>
+
+    <mat-card class="panel" appearance="outlined">
+      <div class="panel-heading">
+        <div>
+          <h2>Nouveau rendez-vous</h2>
+          <p>Le créneau est lié à un client et à un service actif de Chez Marie.</p>
+        </div>
+      </div>
+
+      <form class="appointment-form" [formGroup]="appointmentForm" (ngSubmit)="createAppointment()">
+        <mat-form-field appearance="outline">
+          <mat-label>Client</mat-label>
+          <mat-select formControlName="customerId">
+            <mat-option [value]="0">Sélectionner un client</mat-option>
+            @for (customer of customers(); track customer.id) {
+              <mat-option [value]="customer.id">{{ customerLabel(customer) }}</mat-option>
+            }
+          </mat-select>
+          @if (appointmentForm.controls.customerId.invalid && appointmentForm.controls.customerId.touched) {
+            <mat-error>Choisissez un client.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Service</mat-label>
+          <mat-select formControlName="serviceId">
+            <mat-option [value]="0">Sélectionner un service</mat-option>
+            @for (service of services(); track service.id) {
+              <mat-option [value]="service.id">{{ service.name }}</mat-option>
+            }
+          </mat-select>
+          @if (appointmentForm.controls.serviceId.invalid && appointmentForm.controls.serviceId.touched) {
+            <mat-error>Choisissez un service.</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput type="date" formControlName="appointmentDate" />
+            @if (
+              appointmentForm.controls.appointmentDate.invalid &&
+              appointmentForm.controls.appointmentDate.touched
+            ) {
+              <mat-error>La date est requise.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Heure</mat-label>
+            <input matInput type="time" formControlName="appointmentTime" />
+            @if (
+              appointmentForm.controls.appointmentTime.invalid &&
+              appointmentForm.controls.appointmentTime.touched
+            ) {
+              <mat-error>L’heure est requise.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Notes</mat-label>
+          <textarea matInput rows="3" formControlName="notes"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-flat-button type="submit" [disabled]="isSaving()">
+            <mat-icon>event_available</mat-icon>
+            <span>Créer le rendez-vous</span>
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+
+  <mat-card class="panel" appearance="outlined">
+    <div class="panel-heading">
+      <div>
+        <h2>Rendez-vous enregistrés</h2>
+        <p>Le statut met en évidence les rendez-vous honorés, planifiés et annulés.</p>
+      </div>
+    </div>
+
+    <div class="appointments-list">
+      @for (appointment of appointments(); track appointment.id) {
+        <article class="appointment-item">
+          <div class="appointment-main">
+            <div class="appointment-title">
+              <h3>{{ customerLabel(appointment.customer) }}</h3>
+              <mat-chip class="status-chip" [class]="appointment.status.toLowerCase()">
+                {{ statusLabel(appointment.status) }}
+              </mat-chip>
+            </div>
+
+            <p>{{ appointment.service.name }}</p>
+            <p>
+              {{ formatDate(appointment.appointmentDate) }} a {{ formatTime(appointment.appointmentTime) }}
+            </p>
+
+            @if (appointment.notes) {
+              <p class="notes">{{ appointment.notes }}</p>
+            }
+          </div>
+
+          <div class="appointment-actions">
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="honorAppointment(appointment)"
+              [disabled]="isActionDisabled(appointment)"
+            >
+              <mat-icon>check_circle</mat-icon>
+              <span>Honoré</span>
+            </button>
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="cancelAppointment(appointment)"
+              [disabled]="isActionDisabled(appointment)"
+            >
+              <mat-icon>cancel</mat-icon>
+              <span>Annuler</span>
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p class="empty-state">Aucun rendez-vous trouvé avec ces filtres.</p>
+      }
+    </div>
+  </mat-card>
+</section>
