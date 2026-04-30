@@ -23,6 +23,14 @@ Le périmètre implémenté couvre la gestion des clients, la gestion des rendez
 - Attribuer automatiquement 100 points lorsqu'un rendez-vous est honoré.
 - Consulter le solde de points et l'historique de fidélité d'un client.
 
+## Contraintes de l'Étude de Cas
+
+- API ouverte sans authentification avancée : la connexion client est volontairement simulée par email.
+- RGPD : seules les données nécessaires au périmètre sont stockées pour les clients (`nom`, `email`, `téléphone`) et les données de démonstration utilisent des adresses d'exemple.
+- Accessibilité et responsive design : l'interface Angular Material est utilisable sur desktop et mobile, avec navigation adaptée aux petits écrans.
+- Scalabilité fonctionnelle : le modèle conserve une table `shops` et des clés étrangères par commerce, même si la démonstration est centrée sur "Chez Marie".
+- Lancement local reproductible : l'application complète démarre avec une seule commande Docker Compose.
+
 ## Lancement Local
 
 Prérequis :
@@ -99,6 +107,22 @@ Chaque issue doit être reliée à une user story ou à un livrable attendu.
 | `#10` | Concevoir la base de données | Livrable | Clôturée |
 | `#9` | Ajouter les tests et rapports de couverture | Livrable | Clôturée |
 | `#8` | Ajouter Docker et la CI/CD | Livrable | Clôturée |
+| `#12` | Audit final de conformité de l'étude de cas | Qualité | Clôturée |
+| `#13` | Corriger le style des chips de statut | Correction | Clôturée |
+
+## Traçabilité GitHub
+
+Les branches de fonctionnalité et de correction sont conservées après fusion, conformément au workflow retenu.
+
+| Périmètre | Issues | Branche principale | Commit ou merge de référence |
+| --- | --- | --- | --- |
+| Organisation projet | `#1` à `#10` initiales | `feature/1-project-organization` | `94f94c7`, `cbcc554` |
+| Conception BDD | `#10` | `feature/q2-database-design` | `78e4982`, `5413c74` |
+| Backend API et règles métier | `#1` à `#7` | `feature/backend-core-api` | `0bda760`, `5ac9e9b`, `2efcfb0` |
+| Frontend responsive | `#1` à `#7`, `#11` | `feature/11-frontend-shell` | `04c37df`, `6759666` |
+| Tests, couverture, Docker et CI/CD | `#8`, `#9` | `feature/8-local-docker-run` | `fa95f34`, `00cf7d1` |
+| Correction UI des statuts | `#13` | `fix/status-chip-outline` | `274d05d`, `6ef94e9` |
+| Audit final | `#12` | `fix/12-compliance-audit` | commit de finalisation |
 
 ## API
 
@@ -122,6 +146,17 @@ Les images Docker prévues sont :
 
 - `orhanma/shopwise-backend`
 - `orhanma/shopwise-frontend`
+
+## Configuration
+
+Les variables d'environnement utiles au lancement Docker sont déclarées dans `docker-compose.yml` :
+
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+- `SERVER_PORT`
+
+Un éventuel fichier `.env` local est ignoré par Git pour éviter de versionner des secrets ou des paramètres personnels.
 
 ## Tests et Couverture
 
@@ -172,3 +207,15 @@ Secrets GitHub nécessaires :
 
 - `DOCKERHUB_USERNAME` : `orhanma`
 - `DOCKERHUB_TOKEN` : token d'accès DockerHub
+
+La publication DockerHub a été validée sur le workflow GitHub Actions du commit `274d05d`.
+
+## Auto-Évaluation Finale
+
+| Partie | État | Preuves |
+| --- | --- | --- |
+| Q1 Organisation | Validé | Issues `#1` à `#13`, labels, workflow Git et tableau de suivi dans ce README |
+| Q2 Conception | Validé | `bdd/schema base de données.pdf`, `bdd/schema-base-donnees.md`, `bdd/script.sql`, migrations Flyway |
+| Q3 Développement | Validé | Backend Spring Boot, frontend Angular, endpoints et écrans couvrant les user stories |
+| Q4 Tests | Validé | Tests backend/frontend, rapports dans `couverture/`, seuils de 60 % dépassés |
+| Q5 Industrialisation | Validé | Dockerfiles, `docker-compose.yml`, GitHub Actions, artefacts de couverture, images DockerHub |
