@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopwise-backend</a> &gt; <a href="index.source.html" class="el_package">com.shopwise.backend.service</a> &gt; <span class="el_source">CustomerService.java</span></div><h1>CustomerService.java</h1><pre class="source lang-java linenums">package com.shopwise.backend.service;
+
+import com.shopwise.backend.api.dto.CustomerRequest;
+import com.shopwise.backend.domain.Customer;
+import com.shopwise.backend.domain.Shop;
+import com.shopwise.backend.repository.CustomerRepository;
+import com.shopwise.backend.repository.ShopRepository;
+import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class CustomerService {
+    public static final long DEMO_SHOP_ID = 1L;
+
+    private final CustomerRepository customerRepository;
+    private final ShopRepository shopRepository;
+
+<span class="fc" id="L19">    public CustomerService(CustomerRepository customerRepository, ShopRepository shopRepository) {</span>
+<span class="fc" id="L20">        this.customerRepository = customerRepository;</span>
+<span class="fc" id="L21">        this.shopRepository = shopRepository;</span>
+<span class="fc" id="L22">    }</span>
+
+    public List&lt;Customer&gt; listCustomers() {
+<span class="nc" id="L25">        return customerRepository.findByShopIdOrderByLastNameAscFirstNameAsc(DEMO_SHOP_ID);</span>
+    }
+
+    public Customer getCustomer(long id) {
+<span class="fc" id="L29">        return customerRepository.findByIdAndShopId(id, DEMO_SHOP_ID)</span>
+<span class="fc" id="L30">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Client introuvable.&quot;));</span>
+    }
+
+    public Customer findByEmail(String email) {
+<span class="nc" id="L34">        return customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, email.trim())</span>
+<span class="nc" id="L35">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Aucun client ne correspond à cet email.&quot;));</span>
+    }
+
+    @Transactional
+    public Customer createCustomer(CustomerRequest request) {
+<span class="fc" id="L40">        String normalizedEmail = request.email().trim().toLowerCase();</span>
+<span class="fc" id="L41">        customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, normalizedEmail)</span>
+<span class="fc" id="L42">                .ifPresent(customer -&gt; {</span>
+<span class="fc" id="L43">                    throw new BusinessRuleException(&quot;Un client existe déjà avec cet email.&quot;);</span>
+                });
+<span class="fc" id="L45">        Shop shop = shopRepository.findById(DEMO_SHOP_ID)</span>
+<span class="pc" id="L46">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Commerce de démonstration introuvable.&quot;));</span>
+<span class="fc" id="L47">        Customer customer = new Customer();</span>
+<span class="fc" id="L48">        customer.setShop(shop);</span>
+<span class="fc" id="L49">        applyRequest(customer, request);</span>
+<span class="fc" id="L50">        return customerRepository.save(customer);</span>
+    }
+
+    @Transactional
+    public Customer updateCustomer(long id, CustomerRequest request) {
+<span class="fc" id="L55">        Customer customer = getCustomer(id);</span>
+<span class="fc" id="L56">        String normalizedEmail = request.email().trim().toLowerCase();</span>
+<span class="fc" id="L57">        customerRepository.findByShopIdAndEmailIgnoreCase(DEMO_SHOP_ID, normalizedEmail)</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                .filter(existing -&gt; !existing.getId().equals(id))</span>
+<span class="nc" id="L59">                .ifPresent(existing -&gt; {</span>
+<span class="fc" id="L60">                    throw new BusinessRuleException(&quot;Un autre client existe déjà avec cet email.&quot;);</span>
+                });
+<span class="nc" id="L62">        applyRequest(customer, request);</span>
+<span class="nc" id="L63">        return customer;</span>
+    }
+
+    private void applyRequest(Customer customer, CustomerRequest request) {
+<span class="fc" id="L67">        customer.setFirstName(request.firstName().trim());</span>
+<span class="fc" id="L68">        customer.setLastName(request.lastName().trim());</span>
+<span class="fc" id="L69">        customer.setEmail(request.email().trim().toLowerCase());</span>
+<span class="fc" id="L70">        customer.setPhone(request.phone());</span>
+<span class="fc" id="L71">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

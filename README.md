@@ -25,17 +25,44 @@ Le périmètre implémenté couvre la gestion des clients, la gestion des rendez
 
 ## Lancement Local
 
-Le projet doit pouvoir être lancé localement en une seule commande :
+Prérequis :
+
+- Docker ;
+- Docker Compose v2.
+
+Le projet se lance localement en une seule commande depuis la racine du repository :
 
 ```bash
 docker compose up --build
 ```
 
-Cette commande lancera, à terme, les services suivants :
+Cette commande lance les services suivants :
 
 - base PostgreSQL ;
 - backend Spring Boot ;
 - frontend Angular servi par Nginx.
+
+Une fois les conteneurs démarrés :
+
+- Frontend : `http://localhost:4200`
+- Backend : `http://localhost:8080`
+- Swagger UI : `http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON : `http://localhost:8080/v3/api-docs`
+
+Les données de démonstration sont injectées par Flyway au démarrage du backend.
+
+Pour arrêter l'application :
+
+```bash
+docker compose down
+```
+
+Pour réinitialiser totalement la base locale Docker :
+
+```bash
+docker compose down -v
+docker compose up --build
+```
 
 ## Workflow Git
 
@@ -61,16 +88,17 @@ Chaque issue doit être reliée à une user story ou à un livrable attendu.
 
 | Issue | Sujet | Type | Statut |
 | --- | --- | --- | --- |
-| `#1` | Créer et mettre à jour une fiche client | User story | Ouverte |
-| `#3` | Créer un rendez-vous | User story | Ouverte |
-| `#4` | Lister et filtrer les rendez-vous | User story | Ouverte |
-| `#2` | Marquer un rendez-vous honoré ou annulé | User story | Ouverte |
-| `#7` | Attribuer automatiquement les points de fidélité | User story | Ouverte |
-| `#5` | Simuler la connexion client | User story | Ouverte |
-| `#6` | Consulter le solde et l'historique de points | User story | Ouverte |
+| `#1` | Créer et mettre à jour une fiche client | User story | Clôturée |
+| `#3` | Créer un rendez-vous | User story | Clôturée |
+| `#4` | Lister et filtrer les rendez-vous | User story | Clôturée |
+| `#2` | Marquer un rendez-vous honoré ou annulé | User story | Clôturée |
+| `#7` | Attribuer automatiquement les points de fidélité | User story | Clôturée |
+| `#5` | Simuler la connexion client | User story | Clôturée |
+| `#6` | Consulter le solde et l'historique de points | User story | Clôturée |
+| `#11` | Initialiser le frontend Angular responsive | Livrable | Clôturée |
 | `#10` | Concevoir la base de données | Livrable | Clôturée |
-| `#9` | Ajouter les tests et rapports de couverture | Livrable | En cours |
-| `#8` | Ajouter Docker et la CI/CD | Livrable | Ouverte |
+| `#9` | Ajouter les tests et rapports de couverture | Livrable | Clôturée |
+| `#8` | Ajouter Docker et la CI/CD | Livrable | Clôturée |
 
 ## API
 
@@ -81,9 +109,66 @@ La documentation OpenAPI/Swagger sera disponible après lancement du backend :
 
 ## Déploiement
 
-La procédure de déploiement sera complétée avec l'industrialisation du projet.
+La procédure locale reproductible repose sur Docker Compose :
+
+1. Cloner le repository.
+2. Vérifier que Docker est démarré.
+3. Lancer `docker compose up --build` depuis la racine.
+4. Accéder au frontend sur `http://localhost:4200`.
+
+Le frontend Nginx proxyfie les appels `/api` vers le backend Spring Boot. Le backend se connecte à PostgreSQL avec les variables d'environnement déclarées dans `docker-compose.yml`.
 
 Les images Docker prévues sont :
 
 - `orhanma/shopwise-backend`
 - `orhanma/shopwise-frontend`
+
+## Tests et Couverture
+
+Backend :
+
+```bash
+cd backend
+./gradlew test jacocoTestReport --no-daemon
+```
+
+Frontend :
+
+```bash
+cd frontend
+npm run test:coverage -- --watch=false
+```
+
+Les rapports déposés dans le repository sont disponibles dans :
+
+- `couverture/backend/html/index.html`
+- `couverture/backend/jacocoTestReport.xml`
+- `couverture/frontend/index.html`
+- `couverture/frontend/coverage-final.json`
+
+Couverture actuelle :
+
+- Backend : 85,34 % instructions, 92,86 % branches.
+- Frontend : 79,43 % instructions, 69,87 % branches.
+
+## CI/CD
+
+La pipeline GitHub Actions est définie dans `.github/workflows/ci-cd.yml`.
+
+Elle exécute à chaque push sur `main`, `feature/**`, `fix/**` et à chaque pull request vers `main` :
+
+- le build et les tests backend avec rapport JaCoCo ;
+- le build et les tests frontend avec rapport de couverture ;
+- la mise à disposition des rapports de couverture en artefacts téléchargeables.
+
+Sur chaque push vers `main`, la pipeline construit et publie les images Docker suivantes sur DockerHub si les secrets sont configurés :
+
+- `orhanma/shopwise-backend:latest`
+- `orhanma/shopwise-backend:<sha>`
+- `orhanma/shopwise-frontend:latest`
+- `orhanma/shopwise-frontend:<sha>`
+
+Secrets GitHub nécessaires :
+
+- `DOCKERHUB_USERNAME` : `orhanma`
+- `DOCKERHUB_TOKEN` : token d'accès DockerHub

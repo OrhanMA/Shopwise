@@ -1,13 +1,14 @@
 .page-header,
 .customers-layout {
   display: grid;
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .page-header {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
-  margin-bottom: 1rem;
+  gap: var(--sw-gap-lg);
+  margin-bottom: var(--sw-gap);
 }
 
 .eyebrow {
@@ -20,27 +21,33 @@ h1,
 h2,
 h3 {
   margin: 0;
-  color: #0f172a;
+  color: var(--sw-heading);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .intro,
 .panel-heading p,
 .customer-main p {
   margin: 0.35rem 0 0;
-  color: #475569;
+  color: var(--sw-muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .header-stats {
-  display: flex;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(8rem, 1fr));
+  gap: var(--sw-gap-sm);
 }
 
 .stat {
-  min-width: 8rem;
+  min-width: 0;
   padding: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 0.75rem;
+  border: var(--sw-border);
+  border-radius: var(--sw-radius);
   background: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
 }
 
 .stat span,
@@ -58,31 +65,34 @@ h3 {
 
 .customers-layout {
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: start;
 }
 
 .panel {
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.88);
+  padding: 1.5rem;
+  border-radius: var(--sw-radius);
+  background: var(--sw-card-bg);
+  overflow: hidden;
 }
 
 .panel-heading {
   display: flex;
-  gap: 1rem;
+  gap: var(--sw-gap);
   justify-content: space-between;
   align-items: start;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .customer-form,
 .customer-list {
   display: grid;
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .form-actions {
@@ -93,11 +103,12 @@ h3 {
 .customer-item {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 0.75rem;
+  gap: var(--sw-gap);
+  padding: 1.25rem;
+  border: var(--sw-border);
+  border-radius: var(--sw-radius);
   background: #f8fafc;
+  overflow: hidden;
 }
 
 .customer-main {
@@ -107,14 +118,14 @@ h3 {
 .customer-side {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sw-gap-sm);
   align-items: flex-end;
 }
 
 .points-badge {
   min-width: 6rem;
   padding: 0.75rem 0.9rem;
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
   background: rgba(15, 118, 110, 0.1);
   text-align: right;
 }
@@ -122,7 +133,7 @@ h3 {
 .feedback {
   margin: 0 0 1rem;
   padding: 0.85rem 1rem;
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
 }
 
 .feedback.error {
@@ -132,10 +143,14 @@ h3 {
 
 .empty-state {
   margin: 0;
-  padding: 1rem;
+  padding: 1.15rem;
   border: 1px dashed rgba(15, 23, 42, 0.18);
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
   color: #475569;
+}
+
+mat-form-field {
+  width: 100%;
 }
 
 @media (max-width: 900px) {
@@ -146,11 +161,15 @@ h3 {
   }
 
   .header-stats {
-    flex-wrap: wrap;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
+  .panel {
+    padding: 1.125rem;
+  }
+
   .customer-item,
   .panel-heading {
     flex-direction: column;
@@ -162,5 +181,9 @@ h3 {
 
   .points-badge {
     text-align: left;
+  }
+
+  .header-stats {
+    grid-template-columns: 1fr;
   }
 }

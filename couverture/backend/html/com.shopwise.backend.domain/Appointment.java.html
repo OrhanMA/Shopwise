@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Appointment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopwise-backend</a> &gt; <a href="index.source.html" class="el_package">com.shopwise.backend.domain</a> &gt; <span class="el_source">Appointment.java</span></div><h1>Appointment.java</h1><pre class="source lang-java linenums">package com.shopwise.backend.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+@Entity
+@Table(name = &quot;appointments&quot;)
+<span class="fc" id="L20">public class Appointment {</span>
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;shop_id&quot;, nullable = false)
+    private Shop shop;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;customer_id&quot;, nullable = false)
+    private Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;service_id&quot;, nullable = false)
+    private ServiceOffering service;
+    @Column(name = &quot;appointment_date&quot;, nullable = false)
+    private LocalDate appointmentDate;
+    @Column(name = &quot;appointment_time&quot;, nullable = false)
+    private LocalTime appointmentTime;
+<span class="fc" id="L37">    @Enumerated(EnumType.STRING)</span>
+    @Column(nullable = false)
+    private AppointmentStatus status = AppointmentStatus.SCHEDULED;
+    private String notes;
+    @Column(name = &quot;honored_at&quot;)
+    private LocalDateTime honoredAt;
+    @Column(name = &quot;cancelled_at&quot;)
+    private LocalDateTime cancelledAt;
+
+<span class="fc" id="L46">    public Long getId() { return id; }</span>
+<span class="fc" id="L47">    public Shop getShop() { return shop; }</span>
+<span class="fc" id="L48">    public void setShop(Shop shop) { this.shop = shop; }</span>
+<span class="fc" id="L49">    public Customer getCustomer() { return customer; }</span>
+<span class="fc" id="L50">    public void setCustomer(Customer customer) { this.customer = customer; }</span>
+<span class="fc" id="L51">    public ServiceOffering getService() { return service; }</span>
+<span class="fc" id="L52">    public void setService(ServiceOffering service) { this.service = service; }</span>
+<span class="fc" id="L53">    public LocalDate getAppointmentDate() { return appointmentDate; }</span>
+<span class="fc" id="L54">    public void setAppointmentDate(LocalDate appointmentDate) { this.appointmentDate = appointmentDate; }</span>
+<span class="fc" id="L55">    public LocalTime getAppointmentTime() { return appointmentTime; }</span>
+<span class="fc" id="L56">    public void setAppointmentTime(LocalTime appointmentTime) { this.appointmentTime = appointmentTime; }</span>
+<span class="fc" id="L57">    public AppointmentStatus getStatus() { return status; }</span>
+<span class="fc" id="L58">    public void honor() { this.status = AppointmentStatus.HONORED; this.honoredAt = LocalDateTime.now(); this.cancelledAt = null; }</span>
+<span class="fc" id="L59">    public void cancel() { this.status = AppointmentStatus.CANCELLED; this.cancelledAt = LocalDateTime.now(); }</span>
+<span class="fc" id="L60">    public String getNotes() { return notes; }</span>
+<span class="fc" id="L61">    public void setNotes(String notes) { this.notes = notes; }</span>
+<span class="nc" id="L62">    public LocalDateTime getHonoredAt() { return honoredAt; }</span>
+<span class="nc" id="L63">    public LocalDateTime getCancelledAt() { return cancelledAt; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

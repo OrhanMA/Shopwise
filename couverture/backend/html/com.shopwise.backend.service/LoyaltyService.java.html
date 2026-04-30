@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoyaltyService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopwise-backend</a> &gt; <a href="index.source.html" class="el_package">com.shopwise.backend.service</a> &gt; <span class="el_source">LoyaltyService.java</span></div><h1>LoyaltyService.java</h1><pre class="source lang-java linenums">package com.shopwise.backend.service;
+
+import com.shopwise.backend.api.dto.CustomerResponse;
+import com.shopwise.backend.api.dto.LoyaltySummaryResponse;
+import com.shopwise.backend.api.dto.LoyaltyTransactionResponse;
+import com.shopwise.backend.domain.Customer;
+import com.shopwise.backend.repository.LoyaltyTransactionRepository;
+import java.util.List;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LoyaltyService {
+    private final CustomerService customerService;
+    private final LoyaltyTransactionRepository loyaltyTransactionRepository;
+
+<span class="fc" id="L16">    public LoyaltyService(CustomerService customerService, LoyaltyTransactionRepository loyaltyTransactionRepository) {</span>
+<span class="fc" id="L17">        this.customerService = customerService;</span>
+<span class="fc" id="L18">        this.loyaltyTransactionRepository = loyaltyTransactionRepository;</span>
+<span class="fc" id="L19">    }</span>
+
+    public LoyaltySummaryResponse getSummary(long customerId) {
+<span class="fc" id="L22">        Customer customer = customerService.getCustomer(customerId);</span>
+<span class="fc" id="L23">        List&lt;LoyaltyTransactionResponse&gt; transactions = loyaltyTransactionRepository</span>
+<span class="fc" id="L24">                .findByCustomerIdOrderByCreatedAtDesc(customerId)</span>
+<span class="fc" id="L25">                .stream()</span>
+<span class="fc" id="L26">                .map(LoyaltyTransactionResponse::from)</span>
+<span class="fc" id="L27">                .toList();</span>
+<span class="fc" id="L28">        return new LoyaltySummaryResponse(CustomerResponse.from(customer), customer.getLoyaltyPoints(), transactions);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

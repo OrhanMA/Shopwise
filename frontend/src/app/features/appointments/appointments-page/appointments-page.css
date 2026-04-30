@@ -2,13 +2,14 @@
 .appointments-layout,
 .forms-column {
   display: grid;
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .page-header {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
-  margin-bottom: 1rem;
+  gap: var(--sw-gap-lg);
+  margin-bottom: var(--sw-gap);
 }
 
 .eyebrow {
@@ -21,27 +22,33 @@ h1,
 h2,
 h3 {
   margin: 0;
-  color: #0f172a;
+  color: var(--sw-heading);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .intro,
 .panel-heading p,
 .appointment-main p {
   margin: 0.35rem 0 0;
-  color: #475569;
+  color: var(--sw-muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .header-stats {
-  display: flex;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(8.5rem, 1fr));
+  gap: var(--sw-gap-sm);
 }
 
 .stat {
-  min-width: 8.5rem;
+  min-width: 0;
   padding: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 0.75rem;
+  border: var(--sw-border);
+  border-radius: var(--sw-radius);
   background: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
 }
 
 .stat span {
@@ -57,49 +64,61 @@ h3 {
 
 .appointments-layout {
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  align-items: start;
 }
 
 .panel {
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.88);
+  padding: 1.5rem;
+  border-radius: var(--sw-radius);
+  background: var(--sw-card-bg);
+  overflow: hidden;
 }
 
 .panel-heading {
-  margin-bottom: 1rem;
+  display: flex;
+  gap: var(--sw-gap);
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
 }
 
 .filters-form,
 .appointment-form,
 .appointments-list {
   display: grid;
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .form-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--sw-gap-sm);
 }
 
 .appointment-item {
   display: flex;
-  gap: 1rem;
+  gap: var(--sw-gap);
   justify-content: space-between;
-  padding: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 0.75rem;
+  padding: 1.25rem;
+  border: var(--sw-border);
+  border-radius: var(--sw-radius);
   background: #f8fafc;
+  overflow: hidden;
+}
+
+.appointment-main {
+  min-width: 0;
 }
 
 .appointment-title {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--sw-gap-sm);
   flex-wrap: wrap;
   align-items: center;
 }
@@ -107,26 +126,38 @@ h3 {
 .appointment-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sw-gap-sm);
   min-width: 9rem;
+  align-items: stretch;
 }
 
 .status-chip {
+  --mdc-chip-container-shape-radius: 999px;
+  --mdc-chip-outline-color: transparent;
+  --mdc-chip-label-text-color: currentColor;
+
   border-radius: 999px;
   font-weight: 600;
+  overflow: hidden;
 }
 
 .status-chip.scheduled {
+  --mdc-chip-elevated-container-color: rgba(29, 78, 216, 0.12);
+
   background: rgba(29, 78, 216, 0.12);
   color: #1d4ed8;
 }
 
 .status-chip.honored {
+  --mdc-chip-elevated-container-color: rgba(15, 118, 110, 0.14);
+
   background: rgba(15, 118, 110, 0.14);
   color: #0f766e;
 }
 
 .status-chip.cancelled {
+  --mdc-chip-elevated-container-color: rgba(220, 38, 38, 0.1);
+
   background: rgba(220, 38, 38, 0.1);
   color: #b91c1c;
 }
@@ -138,7 +169,7 @@ h3 {
 .feedback {
   margin: 0 0 1rem;
   padding: 0.85rem 1rem;
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
 }
 
 .feedback.error {
@@ -148,10 +179,14 @@ h3 {
 
 .empty-state {
   margin: 0;
-  padding: 1rem;
+  padding: 1.15rem;
   border: 1px dashed rgba(15, 23, 42, 0.18);
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
   color: #475569;
+}
+
+mat-form-field {
+  width: 100%;
 }
 
 @media (max-width: 960px) {
@@ -159,9 +194,17 @@ h3 {
   .page-header {
     grid-template-columns: 1fr;
   }
+
+  .header-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
+  .panel {
+    padding: 1.125rem;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
@@ -176,6 +219,6 @@ h3 {
   }
 
   .header-stats {
-    flex-wrap: wrap;
+    grid-template-columns: 1fr;
   }
 }

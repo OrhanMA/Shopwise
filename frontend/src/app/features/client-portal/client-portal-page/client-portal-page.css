@@ -2,13 +2,14 @@
 .portal-layout,
 .portal-content {
   display: grid;
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .page-header {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
-  margin-bottom: 1rem;
+  gap: var(--sw-gap-lg);
+  margin-bottom: var(--sw-gap);
 }
 
 .eyebrow {
@@ -21,7 +22,9 @@ h1,
 h2,
 h3 {
   margin: 0;
-  color: #0f172a;
+  color: var(--sw-heading);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .intro,
@@ -30,17 +33,19 @@ h3 {
 .transaction-item p,
 .header-note p {
   margin: 0.35rem 0 0;
-  color: #475569;
+  color: var(--sw-muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .header-note {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--sw-gap-sm);
   align-items: start;
   max-width: 22rem;
   padding: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 0.75rem;
+  border: var(--sw-border);
+  border-radius: var(--sw-radius);
   background: rgba(255, 255, 255, 0.85);
 }
 
@@ -49,33 +54,35 @@ h3 {
 }
 
 .panel {
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.88);
+  padding: 1.5rem;
+  border-radius: var(--sw-radius);
+  background: var(--sw-card-bg);
+  overflow: hidden;
 }
 
 .login-form,
 .transactions-list {
   display: grid;
-  gap: 1rem;
+  gap: var(--sw-gap);
 }
 
 .form-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--sw-gap-sm);
 }
 
 .identity-row {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--sw-gap);
   align-items: start;
 }
 
 .balance-card {
   min-width: 9rem;
   padding: 1rem 1.1rem;
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
   background: rgba(180, 83, 9, 0.1);
   text-align: right;
 }
@@ -95,12 +102,13 @@ h3 {
 
 .transaction-item {
   display: flex;
-  gap: 1rem;
+  gap: var(--sw-gap);
   justify-content: space-between;
-  padding: 1rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 0.75rem;
+  padding: 1.25rem;
+  border: var(--sw-border);
+  border-radius: var(--sw-radius);
   background: #f8fafc;
+  overflow: hidden;
 }
 
 .transaction-points {
@@ -111,7 +119,7 @@ h3 {
 .feedback {
   margin: 0 0 1rem;
   padding: 0.85rem 1rem;
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
 }
 
 .feedback.error {
@@ -121,10 +129,14 @@ h3 {
 
 .empty-state {
   margin: 0;
-  padding: 1rem;
+  padding: 1.15rem;
   border: 1px dashed rgba(15, 23, 42, 0.18);
-  border-radius: 0.75rem;
+  border-radius: var(--sw-radius);
   color: #475569;
+}
+
+mat-form-field {
+  width: 100%;
 }
 
 @media (max-width: 900px) {
@@ -134,6 +146,10 @@ h3 {
 }
 
 @media (max-width: 640px) {
+  .panel {
+    padding: 1.125rem;
+  }
+
   .identity-row,
   .transaction-item {
     flex-direction: column;
